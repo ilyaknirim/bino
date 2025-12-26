@@ -3,28 +3,45 @@
 <head>
     <meta charset="UTF-8" />
     <title>Beaver Run 🦫</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
+    <!-- Подключаем Telegram WebApp API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-<div class="game-container">
-    <canvas id="gameCanvas"></canvas>
-
-    <div class="hud">
-        <div>Очки: <span id="score">0</span></div>
-        <div>Рекорд: <span id="highScore">0</span></div>
+<div class="game-wrapper">
+    <div class="game-header">
+        <div class="game-title">Beaver Run 🦫</div>
+        <div class="user-info" id="userInfo"></div>
     </div>
 
-    <div class="game-over" id="gameOver">
-        <h2>Бобёр споткнулся 😵</h2>
-        <p>Очки: <span id="finalScore"></span></p>
-        <button id="restart">Заново</button>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="hud">
+            <div class="score-display">Очки: <span id="score">0</span></div>
+            <div class="high-score-display">Рекорд: <span id="highScore">0</span></div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>Бобёр споткнулся 😵</h2>
+            <p>Очки: <span id="finalScore"></span></p>
+            <div class="game-over-buttons">
+                <button id="restart">Заново</button>
+                <button id="shareResult" style="display:none;">Поделиться</button>
+            </div>
+        </div>
     </div>
-</div>
-<div class="mobile-controls">
-    <button id="jumpBtn">⬆</button>
-    <button id="duckBtn">⬇</button>
+
+    <div class="mobile-controls">
+        <button id="jumpBtn">⬆</button>
+        <button id="duckBtn">⬇</button>
+    </div>
+
+    <div class="game-footer">
+        <p>Управляй бобром, избегая препятствий! Используй прыжок (⬆) или приседание (⬇).</p>
+    </div>
 </div>
 
 <script type="module" src="js/main.js"></script>
