@@ -1,20 +1,32 @@
 export class Beaver {
     constructor(groundY) {
         this.x = 80;
-        this.y = groundY - 60;
-        this.baseY = this.y;
+        this.y = groundY - 64;
+        this.groundY = groundY;
 
-        this.width = 50;
-        this.height = 60;
+        this.width = 64;
+        this.height = 64;
 
         this.velY = 0;
-        this.gravity = 2000;
-        this.jumpForce = -750;
+        this.gravity = 2200;
+        this.jumpForce = -800;
 
         this.onGround = true;
         this.ducking = false;
 
-        this.runTime = 0;
+        // === СПРАЙТ ===
+        this.image = new Image();
+        this.image.src = "assets/sprites/beaver.png";
+
+        this.frameIndex = 0;
+        this.frameTime = 0;
+        this.frameSpeed = 0.08;
+
+        this.states = {
+            run: [0, 1, 2, 3],
+            jump: [4],
+            duck: [5]
+        };
     }
 
     jump() {
@@ -26,52 +38,57 @@ export class Beaver {
 
     duck(state) {
         this.ducking = state;
-        this.height = state ? 35 : 60;
+        this.height = state ? 40 : 64;
     }
 
-    update(dt, groundY) {
-        this.runTime += dt;
-
+    update(dt) {
+        // физика
         this.velY += this.gravity * dt;
         this.y += this.velY * dt;
 
-        if (this.y >= groundY - this.height) {
-            this.y = groundY - this.height;
+        if (this.y >= this.groundY - this.height) {
+            this.y = this.groundY - this.height;
             this.velY = 0;
             this.onGround = true;
         }
+
+        // анимация
+        this.frameTime += dt;
+
+        let currentState = "run";
+        if (!this.onGround) currentState = "jump";
+        if (this.ducking) currentState = "duck";
+
+        const frames = this.states[currentState];
+
+        if (this.frameTime >= this.frameSpeed) {
+            this.frameTime = 0;
+            this.frameIndex = (this.frameIndex + 1) % frames.length;
+        }
+
+        this.currentFrame = frames[this.frameIndex];
     }
 
     draw(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-
-        // тело
-        ctx.fillStyle = "#8b5a2b";
-        ctx.fillRect(0, 10, 45, 30);
-
-        // голова
-        ctx.fillRect(35, 0, 25, 25);
-
-        // хвост
-        ctx.fillStyle = "#6b3e1e";
-        ctx.fillRect(-15, 18, 15, 18);
-
-        // лапки (анимация бега)
-        const legOffset = Math.sin(this.runTime * 20) * 5;
-        ctx.fillStyle = "#3e2615";
-        ctx.fillRect(10, 40, 8, 15 + legOffset);
-        ctx.fillRect(30, 40, 8, 15 - legOffset);
-
-        ctx.restore();
+        ctx.drawImage(
+            this.image,
+            this.currentFrame * 64,
+            0,
+            64,
+            64,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
     }
 
     get hitbox() {
         return {
-            x: this.x,
-            y: this.y,
-            w: this.width,
-            h: this.height
+            x: this.x + 10,
+            y: this.y + 10,
+            w: this.width - 20,
+            h: this.height - 10
         };
     }
 }

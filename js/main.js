@@ -5,6 +5,23 @@ const scoreEl = document.getElementById("score");
 const gameOver = document.getElementById("gameOver");
 const finalScore = document.getElementById("finalScore");
 const restart = document.getElementById("restart");
+const jumpBtn = document.getElementById("jumpBtn");
+const duckBtn = document.getElementById("duckBtn");
+
+jumpBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    game.beaver.jump();
+});
+
+duckBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    game.beaver.duck(true);
+});
+
+duckBtn.addEventListener("touchend", e => {
+    e.preventDefault();
+    game.beaver.duck(false);
+});
 
 let game = new Game(canvas);
 let last = 0;
@@ -35,6 +52,20 @@ window.addEventListener("keydown", e => {
 
 window.addEventListener("keyup", e => {
     if (e.code === "ArrowDown") game.beaver.duck(false);
+});
+let touchY = 0;
+
+canvas.addEventListener("touchstart", e => {
+    touchY = e.touches[0].clientY;
+});
+
+canvas.addEventListener("touchend", e => {
+    const deltaY = touchY - e.changedTouches[0].clientY;
+
+    if (deltaY > 40) game.beaver.jump();
+    if (deltaY < -40) game.beaver.duck(true);
+
+    setTimeout(() => game.beaver.duck(false), 300);
 });
 
 restart.onclick = () => location.reload();
